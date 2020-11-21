@@ -12,7 +12,7 @@ class Api {
         }
     }
     // инофрмация профиля
-    loadingUserInfo() {
+    getUserInfo() {
         return fetch(
             `${this._url}/users/me`,
             {
@@ -20,53 +20,42 @@ class Api {
             })
             .then(this._checkResult)
     }
-    setUserInfo(userInfo) {
-        return fetch(
-            `${this._url}/users/me`,
-            {
-                method: 'PATCH',
-                headers: this.headers,
-                body: JSON.stringify({
-                    name: userInfo.userName,
-                    about: userInfo.userJob
-                })
-            }
-        )
-            .then(this._checkResult)
-    }
-    //загрузка изначальных карточек
-    loadingCards() {
-        return fetch(`${this._url}/cards`, {
-            headers: this._headers
-        })
-            .then(this._checkResult)
-    }
-    // добавление новой карточки
-    loadNewCard(cardName, cardLink) {
-        return fetch(`${this._url}/cards`, {
-            method: 'POST',
-            headers: this._headers,
-            body: JSON.stringify({
-                name: cardName,
-                link: cardLink
-            })
-        })
-            .then(this._checkResult)
-    }
-    //редактирование профиля
-    redactUserInfo(redactName, redactInfo) {
+    // редактирование профиля
+    setUserInfo({ name, about }) {
         return fetch(
             `${this._url}/users/me`,
             {
                 method: 'PATCH',
                 headers: this._headers,
                 body: JSON.stringify({
-                    name: redactName,
-                    about: redactInfo
+                    name,
+                    about,
                 })
             })
-            .then(this._checkResult);
+            .then(this._checkResult)
     }
+
+    //загрузка изначальных карточек
+    getCardList() {
+        return fetch(`${this._url}/cards`, {
+            headers: this._headers
+        })
+            .then(this._checkResult)
+    }
+
+    // добавление новой карточки
+    loadNewCard({ name, link }) {
+        return fetch(`${this._url}/cards`, {
+            method: 'POST',
+            headers: this._headers,
+            body: JSON.stringify({
+                name,
+                link,
+            })
+        })
+            .then(this._checkResult)
+    }
+
     //удаление карточки
     deleteCard(itemId) {
         return fetch(`${this._url}/cards/${itemId}`, {
@@ -75,26 +64,27 @@ class Api {
         })
             .then(this._checkResult);
     }
-    //лайк
-    likeCard(cardId) {
-
-        return fetch(`${this._url}/cards/likes/${cardId}`, {
-            method: 'PUT',
-            headers: this._headers
-        })
-            .then(this._checkResult);
+    //лайки и дизлайки
+    changeLikeCardStatus(id, isLiked) {
+        if (isLiked) {
+            console.log('like')
+            return fetch(`${this._url}/cards/likes/${id}`, {
+                method: "PUT",
+                headers: this._headers,
+            })
+                .then(this._checkResult);
+        } else {
+            console.log('nolike')
+            return fetch(`${this._url}/cards/likes/${id}`, {
+                method: "DELETE",
+                headers: this._headers
+            })
+                .then(this._checkResult);
+        }
     }
-    //снять лайк
-    unlikeCard(cardId) {
 
-        return fetch(`${this._url}/cards/likes/${cardId}`, {
-            method: 'DELETE',
-            headers: this._headers
-        })
-            .then(this._checkResult);
-    }
-    //
-    patchNewAvatar(link) {
+    // обновление аватара
+    setUserAvatar(link) {
         console.log(link)
         return fetch(`${this._url}/users/me/avatar`, {
             method: 'PATCH',
