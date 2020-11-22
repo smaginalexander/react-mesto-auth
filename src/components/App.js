@@ -157,7 +157,6 @@ function App() {
           isOpen={isConfirmPopupOpen}
           onClose={closeAllPopups}
           textOnButton={'Да'}
-          onConfirm={handleCardDelete}//доделать если будет время
         />
         <ImagePopup
           card={selectedCard}
