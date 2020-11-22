@@ -67,14 +67,12 @@ class Api {
     //лайки и дизлайки
     changeLikeCardStatus(id, isLiked) {
         if (isLiked) {
-            console.log('like')
             return fetch(`${this._url}/cards/likes/${id}`, {
                 method: "PUT",
                 headers: this._headers,
             })
                 .then(this._checkResult);
         } else {
-            console.log('nolike')
             return fetch(`${this._url}/cards/likes/${id}`, {
                 method: "DELETE",
                 headers: this._headers

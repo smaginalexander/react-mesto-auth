@@ -72,17 +72,19 @@ function App() {
       .setUserInfo({ name, about })
       .then((userData) => {
         setCurrentUser(userData);
+        closeAllPopups()
       })
       .catch((error) => console.error(error))
-      .finally(() => closeAllPopups());
   };
 
   // обновление аватара
   const handleUpdateAvatar = function (avatar) {
     api.setUserAvatar(avatar)
-      .then((avatar) => setCurrentUser(avatar))
+      .then((avatar) => {
+        setCurrentUser(avatar)
+        closeAllPopups()
+      })
       .catch(err => console.log(err))
-      .finally(() => closeAllPopups());
   };
 
   // добавление новой карточки
@@ -91,10 +93,10 @@ function App() {
       .loadNewCard({ name, link })
       .then((newCard) => {
         setCards([newCard, ...cards]);
+        closeAllPopups();
       })
       .catch((error) => console.error(error))
       .finally(() => {
-        closeAllPopups();
         reset();
       });
   };
@@ -103,7 +105,6 @@ function App() {
     api
       .deleteCard(card._id)
       .then(() => {
-        closeAllPopups();
         const newCards = cards.filter(
           (currentCard) => currentCard._id !== card._id
         );
@@ -135,7 +136,7 @@ function App() {
           onCardLike={handleCardLike}
           onDeleteClick={handleCardDelete}
         />
-        <Footer />onClose={closeAllPopups}
+        <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
