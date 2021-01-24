@@ -1,3 +1,4 @@
+import { Route, Switch, useHistory } from 'react-router-dom';
 import React from 'react';
 import Header from './Header.js';
 import { api } from './../utils/api.js';
@@ -9,7 +10,11 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
-
+import Register from './Register';
+import Login from './Login';
+import InfoTooltip from './InfoTooltip';
+import ProtectedRoute from './ProtectedRoute';
+import * as auth from '../utils/auth';
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
@@ -23,6 +28,26 @@ function App() {
     about: '',
     avatar: ''
   });
+  //___
+  const [isInfoTooltip, setInfoTooltip] = React.useState(false);
+  const [InfoTooltipPopup, setInfoTooltipPopup] = React.useState({});
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const history = useHistory();
+
+  //отображение иконки и текста в попапе результата регистрации
+  const onInfoTooltip = (image, text) => {
+    setInfoTooltipPopup({
+      image: image,
+      text: text
+    })
+    setInfoTooltip(true)
+  }
+
+  const handleLogin = (email) => {
+    setLoggedIn(true)
+    setEmail(email);
+  }
 
   //изначальная инфа и фотки
   React.useEffect(() => {
@@ -119,24 +144,71 @@ function App() {
     setEditAvatarPopupOpen(false);
     setConfirmPopupOpen(false);
     setIsImagePopupOpen(false);
+    setInfoTooltip(false);
     setSelectedCard(null);
   };
+  //Проверка токенов
+  const tokenCheck = () => {
+    if (localStorage.getItem('jwt')) {
+      let jwt = localStorage.getItem('jwt');
+      auth.getContent(jwt)
+        .then((res) => {
+          if (res.data) {
+            setLoggedIn(true);
+            history.push('/');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+  }
 
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
 
+  //выход из системы
+  const exitFromPage = () => {
+    history.push('/signin')
+    setLoggedIn(false);
+    localStorage.removeItem('jwt')
+  }
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-        <Main
-          cards={cards}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onDeleteClick={handleCardDelete}
-        />
-        <Footer />
+        {loggedIn ? <Header routePath={'/sign-up'}
+          exitFromPage={exitFromPage}
+          email={email}
+          pageName={'Выйти'}
+          loggedIn={loggedIn}
+          handleLogin={handleLogin} />
+          :
+          ''}
+        <Switch>
+          <Route path="/sign-in">
+            <Header routePath={'/sign-up'} pageName={"Регистрация"} />
+            <Login handleLogin={handleLogin} />
+          </Route>
+          <Route path="/sign-up">
+            <Header routePath={'/sign-in'} pageName={"Войти"} />
+            <Register onInfoTooltip={onInfoTooltip} />
+          </Route>
+          <ProtectedRoute path="/" loggedIn={loggedIn} component={Main}
+            cards={cards}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onDeleteClick={handleCardDelete}
+          />
+        </Switch>
+        {loggedIn ? <Footer /> : ''}
+        <InfoTooltip
+          isOpen={isInfoTooltip}
+          InfoTooltipPopup={InfoTooltipPopup}
+          onClose={closeAllPopups} />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
@@ -165,7 +237,7 @@ function App() {
           onClose={closeAllPopups}
         />
       </CurrentUserContext.Provider>
-    </div>
+    </div >
   );
 }
 

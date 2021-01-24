@@ -5,7 +5,7 @@
 @import url(./__text/popup__text.css);
 @import url(./__error/popup__error.css);
 @import url(./__btn/_invalid/popup__btn_invalid.css);
-
+@import url(./__image/popup__image.css);
 .popup {
     visibility: hidden;
     display: flex;

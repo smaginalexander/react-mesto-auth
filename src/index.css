@@ -20,3 +20,5 @@
 @import url(./blocks/element/__image/_size/element__image_size.css);
 @import url(./blocks/popup/__btn/_invalid/popup__btn_invalid.css);
 @import url(./blocks/element/__trash/_owner/element__trash_owner.css);
+
+@import url(./blocks/register/register.css);
