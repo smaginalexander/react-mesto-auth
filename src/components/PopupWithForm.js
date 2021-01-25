@@ -7,7 +7,7 @@ function PopupWithForm(props) {
                 <button type="button" className="popup__close" onClick={props.onClose}></button>
                 <h2 className="popup__text">{props.title}</h2>
                 {props.children}
-                <button id="delete" className="popup__btn" type="submit">{props.textOnButton}</button>
+                <button className="popup__btn" type="submit">{props.textOnButton}</button>
             </form>
         </div>
     )
