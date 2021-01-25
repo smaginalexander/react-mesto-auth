@@ -3,7 +3,6 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 function Card(props) {
     const currentUser = React.useContext(CurrentUserContext);
-
     const isOwn = props.card.owner._id === currentUser._id;
     const cardDeleteButtonClassName = (
         `element__trash ${isOwn ? 'element__trash_owner' : ''}`
@@ -28,7 +27,7 @@ function Card(props) {
 
 
     return (
-        <>
+        <div className="element">
             <img
                 className="element__image"
                 src={props.card.link}
@@ -48,7 +47,7 @@ function Card(props) {
                 </button>
                 <span className="element__likeNamber">{props.card.likes.length}</span>
             </div>
-        </>
+        </div>
     )
 }
 export default Card;

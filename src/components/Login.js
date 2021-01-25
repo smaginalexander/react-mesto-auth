@@ -1,11 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import * as auth from '../utils/auth';
 
 function Login(props) {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
-    const history = useHistory();
 
     const handleChangeEmail = (evt) => {
         setEmail(evt.target.value);
@@ -15,22 +12,7 @@ function Login(props) {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        auth.authorize(email, password)
-            .then((res) => {
-                if (res) {
-                    props.handleLogin(email);
-                    history.push('/');
-                }
-            })
-            .catch((err) => {
-                if (err.status === 400) {
-                    console.log('Hекорректно заполнено одно из полей')
-                } if (err.status === 401) {
-                    console.log('пользователь с email не найден ')
-                } else {
-                    console.log(err)
-                }
-            })
+        props.onLoginSubmit(email, password);
     }
     return (
         <div className="register">

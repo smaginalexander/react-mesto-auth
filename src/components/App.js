@@ -154,7 +154,9 @@ function App() {
       auth.getContent(jwt)
         .then((res) => {
           if (res.data) {
+            console.log(res)
             setLoggedIn(true);
+            setEmail(res.data.email);
             history.push('/');
           }
         })
@@ -174,6 +176,43 @@ function App() {
     setLoggedIn(false);
     localStorage.removeItem('jwt')
   }
+  const onRegisterSubmit = (email, password) => {
+    auth.register(email, password)
+      .then((res) => {
+        onInfoTooltip(true, 'Вы успешно зарегистрировались!')
+        console.log(res)
+        if (res) {
+          history.push('/sign-in');
+        }
+      })
+      .catch((err) => {
+        onInfoTooltip(false, 'Что-то пошло не так! Попробуйте ещё раз.')
+        if (err.status === 400) {
+          console.log('Hекорректно заполнено одно из полей')
+        } else {
+          console.log(err)
+        }
+      })
+  }
+
+  const onLoginSubmit = (email, password) => {
+    auth.authorize(email, password)
+      .then((res) => {
+        if (res) {
+          handleLogin(email);
+          history.push('/');
+        }
+      })
+      .catch((err) => {
+        if (err.status === 400) {
+          console.log('Hекорректно заполнено одно из полей')
+        } if (err.status === 401) {
+          console.log('пользователь с email не найден ')
+        } else {
+          console.log(err)
+        }
+      })
+  }
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
@@ -188,11 +227,11 @@ function App() {
         <Switch>
           <Route path="/sign-in">
             <Header routePath={'/sign-up'} pageName={"Регистрация"} />
-            <Login handleLogin={handleLogin} />
+            <Login onLoginSubmit={onLoginSubmit} handleLogin={handleLogin} />
           </Route>
           <Route path="/sign-up">
             <Header routePath={'/sign-in'} pageName={"Войти"} />
-            <Register onInfoTooltip={onInfoTooltip} />
+            <Register onRegisterSubmit={onRegisterSubmit} onInfoTooltip={onInfoTooltip} />
           </Route>
           <ProtectedRoute path="/" loggedIn={loggedIn} component={Main}
             cards={cards}

@@ -37,34 +37,31 @@ const AddPlacePopup = function ({
             isOpen={isOpen}
             onClose={onClose}
             onSubmit={handleSubmit}
-            children={
-                <>
-                    <input
-                        value={name}
-                        onChange={handleNameChange}
-                        id="name-card"
-                        className="popup__input"
-                        type="text"
-                        required
-                        placeholder="Название"
-                        name="name"
-                        minLength={"1"}
-                        maxLength={"30"} />
-                    <input
-                        value={link}
-                        onChange={handleLinkChange}
-                        id="link-card"
-                        className="popup__input"
-                        type="url"
-                        required
-                        placeholder="Ссылка на картинку"
-                        name="link" />
-                </>
-            }
             title={'Новое место'}
             name={'add-card'}
             textOnButton={'Создать'}
-        />
+        >
+            <input
+                value={name}
+                onChange={handleNameChange}
+                id="name-card"
+                className="popup__input"
+                type="text"
+                required
+                placeholder="Название"
+                name="name"
+                minLength={"1"}
+                maxLength={"30"} />
+            <input
+                value={link}
+                onChange={handleLinkChange}
+                id="link-card"
+                className="popup__input"
+                type="url"
+                required
+                placeholder="Ссылка на картинку"
+                name="link" />
+        </PopupWithForm>
     );
 };
 
